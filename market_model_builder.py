@@ -1,4 +1,5 @@
-from deeplearning_assistant.model_builder import AbstractModelBuilder
+from model_builder import AbstractModelBuilder
+from keras.utils.vis_utils import plot_model
 
 class MarketPolicyGradientModelBuilder(AbstractModelBuilder):
 
@@ -13,19 +14,19 @@ class MarketPolicyGradientModelBuilder(AbstractModelBuilder):
 		inputs = [B]
 		merges = [b]
 
-		for i in xrange(1):
+		for i in range(1):
 			S = Input(shape=[2, 60, 1])
 			inputs.append(S)
 
-			h = Convolution2D(2048, 3, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 3, 1, border_mode = 'same')(S)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(2048, 5, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 5, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(2048, 10, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 10, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(2048, 20, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 20, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(2048, 40, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 40, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
 
 			h = Flatten()(h)
@@ -33,7 +34,7 @@ class MarketPolicyGradientModelBuilder(AbstractModelBuilder):
 			h = LeakyReLU(0.001)(h)
 			merges.append(h)
 
-			h = Convolution2D(2048, 60, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 60, 1, border_mode = 'same')(S)
 			h = LeakyReLU(0.001)(h)
 
 			h = Flatten()(h)
@@ -50,7 +51,8 @@ class MarketPolicyGradientModelBuilder(AbstractModelBuilder):
 		m = LeakyReLU(0.001)(m)
 		V = Dense(2, activation = 'softmax')(m)
 		model = Model(input = inputs, output = V)
-
+		
+		plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 		return model
 
 class MarketModelBuilder(AbstractModelBuilder):
@@ -68,19 +70,19 @@ class MarketModelBuilder(AbstractModelBuilder):
 		inputs = [B]
 		merges = [b]
 
-		for i in xrange(1):
+		for i in range(1):
 			S = Input(shape=[2, 60, 1])
 			inputs.append(S)
 
-			h = Convolution2D(64, 3, 1, border_mode = 'valid')(S)
+			h = Convolution2D(64, 3, 1, border_mode = 'same')(S)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(128, 5, 1, border_mode = 'valid')(S)
+			h = Convolution2D(128, 5, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(256, 10, 1, border_mode = 'valid')(S)
+			h = Convolution2D(256, 10, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(512, 20, 1, border_mode = 'valid')(S)
+			h = Convolution2D(512, 20, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
-			h = Convolution2D(1024, 40, 1, border_mode = 'valid')(S)
+			h = Convolution2D(1024, 40, 1, border_mode = 'same')(h)
 			h = LeakyReLU(0.001)(h)
 
 			h = Flatten()(h)
@@ -89,7 +91,7 @@ class MarketModelBuilder(AbstractModelBuilder):
 			h = Dropout(dr_rate)(h)
 			merges.append(h)
 
-			h = Convolution2D(2048, 60, 1, border_mode = 'valid')(S)
+			h = Convolution2D(2048, 60, 1, border_mode = 'same')(S)
 			h = LeakyReLU(0.001)(h)
 
 			h = Flatten()(h)
